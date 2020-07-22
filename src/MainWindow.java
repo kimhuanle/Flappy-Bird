@@ -7,7 +7,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.*;
 import java.util.Scanner;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
@@ -50,7 +49,7 @@ public class MainWindow extends JPanel implements MouseListener, KeyListener {
 
 		try {
 			Scanner input = new Scanner(new File("score.txt"));
-			if(input.hasNext())
+			if (input.hasNext())
 				bestScore = input.nextInt();
 			input.close();
 		} catch (IOException ex) {
@@ -59,6 +58,7 @@ public class MainWindow extends JPanel implements MouseListener, KeyListener {
 
 		win = new JFrame();
 		try {
+			win.setIconImage(ImageIO.read(new File("images//game-icon.jpg")));
 			background = ImageIO.read(new File("images//background.png"));
 			textImage = ImageIO.read(new File("images//flappy-bird.png"));
 			play = ImageIO.read(new File("images//play1.png"));
@@ -176,9 +176,9 @@ public class MainWindow extends JPanel implements MouseListener, KeyListener {
 			}
 			String bs = Integer.toString(bestScore);
 			int scorewidth = g.getFontMetrics().stringWidth(sc);
-			scorewidth += score == 1? 3: 0;
+			scorewidth += score == 1 ? 3 : 0;
 			int bestscorewidth = g.getFontMetrics().stringWidth(bs);
-			bestscorewidth += bestScore == 1? 3: 0;
+			bestscorewidth += bestScore == 1 ? 3 : 0;
 			g.setFont(font.deriveFont(30f));
 			g.setColor(Color.BLACK);
 			g.drawString(sc, WIDTH - (WIDTH - scoreBoard.getWidth(this)) / 2 - 28 - scorewidth,
