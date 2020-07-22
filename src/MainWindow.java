@@ -101,7 +101,7 @@ public class MainWindow extends JPanel implements MouseListener, KeyListener {
 		xPlay = WIDTH / 2 - play.getWidth(this) / 2 - 5;
 		yPlay = HEIGHT - base1.getHeight(this) - play.getHeight(this) - 10;
 		for (int i = 0; i < pipes.length; i++)
-			pipes[i] = new Pipe(i * 200);
+			pipes[i] = new Pipe((i + 1) * 200);
 	}
 
 	public void paintComponent(Graphics g) throws NullPointerException {
