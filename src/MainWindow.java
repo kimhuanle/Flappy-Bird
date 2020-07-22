@@ -8,6 +8,9 @@ import java.awt.event.MouseListener;
 import java.io.*;
 import java.util.Scanner;
 import javax.imageio.ImageIO;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.swing.*;
 
 public class MainWindow extends JPanel implements MouseListener, KeyListener {
@@ -22,9 +25,12 @@ public class MainWindow extends JPanel implements MouseListener, KeyListener {
 	private Bird b;
 	Image background, textImage, play, base1, base2, message, gameover, black, scoreBoard, gold, silver, bronze,
 			diamond, newBest;
+	AudioInputStream audio;
+	Clip clip;
 	private int score = 0, bestScore = 0, xBase1, xBase2, xPlay, yPlay, wait = 0;
 	private Pipe[] pipes = new Pipe[3];
-	public static boolean started = false, flied = false, blacked = false, gameOver = false, newBestScore = false;
+	public static boolean started = false, flied = false, blacked = false, gameOver = false, newBestScore = false,
+			playdie = false;
 	private Timer timer;
 
 	public static void main(String args[]) {
@@ -42,9 +48,7 @@ public class MainWindow extends JPanel implements MouseListener, KeyListener {
 			// register the font
 			ge.registerFont(font);
 		} catch (IOException e) {
-			e.printStackTrace();
 		} catch (FontFormatException e) {
-			e.printStackTrace();
 		}
 
 		try {
@@ -53,7 +57,6 @@ public class MainWindow extends JPanel implements MouseListener, KeyListener {
 				bestScore = input.nextInt();
 			input.close();
 		} catch (IOException ex) {
-			System.err.println("ERROR");
 		}
 
 		win = new JFrame();
@@ -81,6 +84,7 @@ public class MainWindow extends JPanel implements MouseListener, KeyListener {
 				repaint();
 			}
 		});
+
 		win.add(this);
 		win.setTitle("Flappy Bird");
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -119,13 +123,18 @@ public class MainWindow extends JPanel implements MouseListener, KeyListener {
 		if (flied) {
 			b.move();
 			for (int i = 0; i < pipes.length; i++) {
-				if (!Pipe.collided)
-					score += b.updateScore(pipes[i]) ? 1 : 0;
+				if (!Pipe.collided && b.updateScore(pipes[i])) {
+					play("sounds//score.wav");
+					score += 1;
+				}
 			}
 			for (int i = pipes.length; i < pipes.length * 2; i++)
 				pipes[i % pipes.length].draw(g, this, pipes[(i - 1) % pipes.length]);
-			if (pipes[0].collided(b) || pipes[1].collided(b) || pipes[2].collided(b))
+			if (pipes[0].collided(b) || pipes[1].collided(b) || pipes[2].collided(b)) {
+				if (!Pipe.collided)
+					play("sounds//hit.wav");
 				Pipe.collided = true;
+			}
 			String sc = Integer.toString(score);
 			int charwidth = g.getFontMetrics().stringWidth(sc);
 			g.setColor(Color.BLACK);
@@ -137,25 +146,30 @@ public class MainWindow extends JPanel implements MouseListener, KeyListener {
 
 		// GameOver
 		if (gameOver) {
+			if (!playdie) {
+				play("sounds//die.wav");
+				playdie = true;
+			}
 			b.move();
 			for (int i = pipes.length; i < pipes.length * 2; i++) {
 				pipes[i % pipes.length].draw(g, this, pipes[(i - 1) % pipes.length]);
 			}
+			int yplay = HEIGHT - base1.getHeight(this) - play.getHeight(this) - 10;
 			g.drawImage(gameover, (WIDTH - gameover.getWidth(this)) / 2, 150, this);
-			g.drawImage(scoreBoard, (WIDTH - scoreBoard.getWidth(this)) / 2, yPlay - 10 - scoreBoard.getHeight(this),
+			g.drawImage(scoreBoard, (WIDTH - scoreBoard.getWidth(this)) / 2, yplay - 10 - scoreBoard.getHeight(this),
 					this);
 			if (score > 40)
 				g.drawImage(diamond, (WIDTH - scoreBoard.getWidth(this)) / 2 + 37,
-						yPlay - 10 - scoreBoard.getHeight(this) + 64, this);
+						yplay - 10 - scoreBoard.getHeight(this) + 64, this);
 			else if (score > 30)
 				g.drawImage(gold, (WIDTH - scoreBoard.getWidth(this)) / 2 + 34,
-						yPlay - 10 - scoreBoard.getHeight(this) + 65, this);
+						yplay - 10 - scoreBoard.getHeight(this) + 65, this);
 			else if (score > 20)
 				g.drawImage(silver, (WIDTH - scoreBoard.getWidth(this)) / 2 + 41,
-						yPlay - 10 - scoreBoard.getHeight(this) + 62, this);
+						yplay - 10 - scoreBoard.getHeight(this) + 62, this);
 			else if (score > 10)
 				g.drawImage(bronze, (WIDTH - scoreBoard.getWidth(this)) / 2 + 38,
-						yPlay - 10 - scoreBoard.getHeight(this) + 54, this);
+						yplay - 10 - scoreBoard.getHeight(this) + 54, this);
 			String sc = Integer.toString(score);
 			if (score > bestScore) {
 				bestScore = score;
@@ -172,7 +186,7 @@ public class MainWindow extends JPanel implements MouseListener, KeyListener {
 			}
 			if (newBestScore) {
 				g.drawImage(newBest, WIDTH - (WIDTH - scoreBoard.getWidth(this)) / 2 - 92 - newBest.getWidth(this),
-						yPlay - 10 - scoreBoard.getHeight(this) + 92, this);
+						yplay - 10 - scoreBoard.getHeight(this) + 92, this);
 			}
 			String bs = Integer.toString(bestScore);
 			int scorewidth = g.getFontMetrics().stringWidth(sc);
@@ -182,15 +196,15 @@ public class MainWindow extends JPanel implements MouseListener, KeyListener {
 			g.setFont(font.deriveFont(30f));
 			g.setColor(Color.BLACK);
 			g.drawString(sc, WIDTH - (WIDTH - scoreBoard.getWidth(this)) / 2 - 28 - scorewidth,
-					yPlay - 10 - scoreBoard.getHeight(this) + 85);
+					yplay - 10 - scoreBoard.getHeight(this) + 85);
 			g.drawString(bs, WIDTH - (WIDTH - scoreBoard.getWidth(this)) / 2 - 28 - bestscorewidth,
-					yPlay - 10 - scoreBoard.getHeight(this) + 150);
+					yplay - 10 - scoreBoard.getHeight(this) + 150);
 			g.setFont(font1.deriveFont(30f));
 			g.setColor(Color.WHITE);
 			g.drawString(sc, WIDTH - (WIDTH - scoreBoard.getWidth(this)) / 2 - 28 - scorewidth,
-					yPlay - 10 - scoreBoard.getHeight(this) + 85);
+					yplay - 10 - scoreBoard.getHeight(this) + 85);
 			g.drawString(bs, WIDTH - (WIDTH - scoreBoard.getWidth(this)) / 2 - 28 - bestscorewidth,
-					yPlay - 10 - scoreBoard.getHeight(this) + 150);
+					yplay - 10 - scoreBoard.getHeight(this) + 150);
 			g.drawImage(play, xPlay, yPlay, this);
 			flied = false;
 		}
@@ -224,8 +238,10 @@ public class MainWindow extends JPanel implements MouseListener, KeyListener {
 			flied = true;
 		}
 		if (flied && !Pipe.collided) {
-			if (b.y > b.width)
+			if (b.y > b.width) {
+				play("sounds//wing.wav");
 				b.jump();
+			}
 		}
 	}
 
@@ -254,6 +270,7 @@ public class MainWindow extends JPanel implements MouseListener, KeyListener {
 			yPlay = HEIGHT - base1.getHeight(this) - play.getHeight(this) - 10;
 			if (x > xPlay + 5 && x < xPlay + play.getWidth(null) - 5 && y > yPlay + 3
 					&& y < yPlay + play.getHeight(null) - 3) {
+				play("sounds//button.wav");
 				started = true;
 				blacked = true;
 				b = new Bird();
@@ -262,6 +279,7 @@ public class MainWindow extends JPanel implements MouseListener, KeyListener {
 				for (int i = 0; i < pipes.length; i++)
 					pipes[i].reset();
 				gameOver = false;
+				playdie = false;
 				Pipe.collided = false;
 			}
 		}
@@ -279,8 +297,10 @@ public class MainWindow extends JPanel implements MouseListener, KeyListener {
 				flied = true;
 			}
 			if (flied && !Pipe.collided) {
-				if (b.y > b.width)
+				if (b.y > b.width) {
+					play("sounds//wing.wav");
 					b.jump();
+				}
 			}
 		}
 	}
@@ -288,6 +308,7 @@ public class MainWindow extends JPanel implements MouseListener, KeyListener {
 	public void keyReleased(KeyEvent e) {
 		if (e.getKeyCode() == KeyEvent.VK_SPACE)
 			if (!started || gameOver) {
+				play("sounds//button.wav");
 				yPlay = HEIGHT - base1.getHeight(this) - play.getHeight(this) - 10;
 				started = true;
 				blacked = true;
@@ -297,11 +318,23 @@ public class MainWindow extends JPanel implements MouseListener, KeyListener {
 				for (int i = 0; i < pipes.length; i++)
 					pipes[i].reset();
 				gameOver = false;
+				playdie = false;
 				Pipe.collided = false;
 				score = 0;
 			}
 	}
 
 	public void keyTyped(KeyEvent arg0) {
+	}
+
+	private void play(String path) {
+		try {
+			clip = AudioSystem.getClip();
+			clip.open(AudioSystem.getAudioInputStream(new File(path)));
+			clip.start();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 	}
 }
