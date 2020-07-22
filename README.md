@@ -32,7 +32,7 @@ Demo of The Game
 ![Gold](images/gold-demo.png)  
 * Diamond  
 ![Diamond](images/diamond-demo.png)  
-  
+
 ---
 How To Play
 ---
