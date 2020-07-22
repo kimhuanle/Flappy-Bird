@@ -32,6 +32,8 @@ Demo of The Game
 ![Gold](images/gold-demo.png)  
 * Diamond  
 ![Diamond](images/diamond-demo.png)  
+
+---
 How To Play
 ---
 * Clone this repository and open the `flappy-bird.exe` file to play the game
