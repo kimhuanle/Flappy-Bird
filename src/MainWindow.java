@@ -158,16 +158,16 @@ public class MainWindow extends JPanel implements MouseListener, KeyListener {
 			g.drawImage(gameover, (WIDTH - gameover.getWidth(this)) / 2, 150, this);
 			g.drawImage(scoreBoard, (WIDTH - scoreBoard.getWidth(this)) / 2, yplay - 10 - scoreBoard.getHeight(this),
 					this);
-			if (score > 40)
+			if (score >= 40)
 				g.drawImage(diamond, (WIDTH - scoreBoard.getWidth(this)) / 2 + 37,
 						yplay - 10 - scoreBoard.getHeight(this) + 64, this);
-			else if (score > 30)
+			else if (score >= 30)
 				g.drawImage(gold, (WIDTH - scoreBoard.getWidth(this)) / 2 + 34,
 						yplay - 10 - scoreBoard.getHeight(this) + 65, this);
-			else if (score > 20)
+			else if (score >= 20)
 				g.drawImage(silver, (WIDTH - scoreBoard.getWidth(this)) / 2 + 41,
 						yplay - 10 - scoreBoard.getHeight(this) + 62, this);
-			else if (score > 10)
+			else if (score >= 10)
 				g.drawImage(bronze, (WIDTH - scoreBoard.getWidth(this)) / 2 + 38,
 						yplay - 10 - scoreBoard.getHeight(this) + 54, this);
 			String sc = Integer.toString(score);
