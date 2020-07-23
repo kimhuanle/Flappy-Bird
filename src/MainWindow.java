@@ -138,10 +138,10 @@ public class MainWindow extends JPanel implements MouseListener, KeyListener {
 			String sc = Integer.toString(score);
 			int charwidth = g.getFontMetrics().stringWidth(sc);
 			g.setColor(Color.BLACK);
-			g.drawString(sc, WIDTH / 2 - charwidth / 2, 120);
+			g.drawString(sc, (WIDTH - charwidth) / 2, 120);
 			g.setFont(font1);
 			g.setColor(Color.WHITE);
-			g.drawString(sc, WIDTH / 2 - charwidth / 2, 120);
+			g.drawString(sc, (WIDTH - charwidth) / 2, 120);
 		}
 
 		// GameOver
@@ -188,22 +188,20 @@ public class MainWindow extends JPanel implements MouseListener, KeyListener {
 				g.drawImage(newBest, WIDTH - (WIDTH - scoreBoard.getWidth(this)) / 2 - 92 - newBest.getWidth(this),
 						yplay - 10 - scoreBoard.getHeight(this) + 92, this);
 			}
-			String bs = Integer.toString(bestScore);
-			int scorewidth = g.getFontMetrics().stringWidth(sc);
-			scorewidth += score == 1 ? 3 : 0;
-			int bestscorewidth = g.getFontMetrics().stringWidth(bs);
-			bestscorewidth += bestScore == 1 ? 3 : 0;
 			g.setFont(font.deriveFont(30f));
 			g.setColor(Color.BLACK);
-			g.drawString(sc, WIDTH - (WIDTH - scoreBoard.getWidth(this)) / 2 - 28 - scorewidth,
+			String bs = Integer.toString(bestScore);
+			int scorewidth = g.getFontMetrics().stringWidth(sc);
+			int bestscorewidth = g.getFontMetrics().stringWidth(bs);
+			g.drawString(sc, WIDTH - (WIDTH - scoreBoard.getWidth(this)) / 2 - 35 - scorewidth,
 					yplay - 10 - scoreBoard.getHeight(this) + 85);
-			g.drawString(bs, WIDTH - (WIDTH - scoreBoard.getWidth(this)) / 2 - 28 - bestscorewidth,
+			g.drawString(bs, WIDTH - (WIDTH - scoreBoard.getWidth(this)) / 2 - 35 - bestscorewidth,
 					yplay - 10 - scoreBoard.getHeight(this) + 150);
 			g.setFont(font1.deriveFont(30f));
 			g.setColor(Color.WHITE);
-			g.drawString(sc, WIDTH - (WIDTH - scoreBoard.getWidth(this)) / 2 - 28 - scorewidth,
+			g.drawString(sc, WIDTH - (WIDTH - scoreBoard.getWidth(this)) / 2 - 35 - scorewidth,
 					yplay - 10 - scoreBoard.getHeight(this) + 85);
-			g.drawString(bs, WIDTH - (WIDTH - scoreBoard.getWidth(this)) / 2 - 28 - bestscorewidth,
+			g.drawString(bs, WIDTH - (WIDTH - scoreBoard.getWidth(this)) / 2 - 35 - bestscorewidth,
 					yplay - 10 - scoreBoard.getHeight(this) + 150);
 			g.drawImage(play, xPlay, yPlay, this);
 			flied = false;
